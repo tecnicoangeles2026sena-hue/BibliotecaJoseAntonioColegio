@@ -270,6 +270,102 @@
   @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .dashboard-grid { grid-template-columns: 1fr; } .leyenda-grid { grid-template-columns: 1fr; } }
   @media (max-width: 600px) { main { padding: 20px 14px; } .header-inner { padding: 12px 14px; } .stat-number { font-size: 2rem; } table { font-size: 0.78rem; } td, thead th { padding: 8px 10px; } .form-row { grid-template-columns: 1fr; } }
 
+  /* ===================== AUTH OVERLAY ===================== */
+  #auth-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(135deg, var(--deep) 0%, #1a0d05 40%, #2d1b0e 70%, #3d2510 100%);
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+    transition: opacity 0.4s ease;
+  }
+  #auth-overlay.hidden { opacity: 0; pointer-events: none; }
+  .auth-bg-pattern {
+    position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    background-image: radial-gradient(circle at 20% 20%, rgba(212,168,67,0.05) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(200,169,110,0.05) 0%, transparent 40%);
+  }
+  .auth-bg-books {
+    position: absolute; font-size: 8rem; opacity: 0.03;
+    user-select: none; pointer-events: none;
+  }
+  .auth-bg-books:nth-child(1) { top: 5%; left: 5%; transform: rotate(-15deg); }
+  .auth-bg-books:nth-child(2) { top: 10%; right: 8%; transform: rotate(12deg); }
+  .auth-bg-books:nth-child(3) { bottom: 8%; left: 10%; transform: rotate(8deg); }
+  .auth-bg-books:nth-child(4) { bottom: 5%; right: 5%; transform: rotate(-10deg); }
+  .auth-container {
+    background: var(--card-bg); border-radius: 18px; padding: 44px 40px;
+    max-width: 440px; width: 100%; box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    position: relative; z-index: 1; border: 1px solid rgba(212,168,67,0.15);
+    animation: authSlideIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes authSlideIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .auth-logo {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border);
+  }
+  .auth-logo-icon {
+    width: 56px; height: 56px; background: var(--gold); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+    box-shadow: 0 4px 16px rgba(212,168,67,0.3); flex-shrink: 0;
+  }
+  .auth-logo-text h2 {
+    font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--deep); font-weight: 700; line-height: 1.2;
+  }
+  .auth-logo-text p { font-size: 0.72rem; color: #7a6a55; font-weight: 300; letter-spacing: 0.07em; text-transform: uppercase; margin-top: 2px; }
+  .auth-tabs { display: flex; gap: 0; margin-bottom: 28px; background: var(--parchment); border-radius: 10px; padding: 4px; border: 1px solid var(--border); }
+  .auth-tab {
+    flex: 1; padding: 9px; border: none; background: transparent; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600;
+    color: #9a8a75; border-radius: 8px; transition: all 0.2s;
+  }
+  .auth-tab.active { background: var(--deep); color: var(--gold); box-shadow: 0 2px 8px rgba(45,27,14,0.2); }
+  .auth-panel { display: none; }
+  .auth-panel.active { display: block; }
+  .auth-field { margin-bottom: 18px; }
+  .auth-field label { display: block; font-size: 0.78rem; font-weight: 600; color: #5a4a35; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .auth-field input {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 9px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; background: var(--parchment);
+    color: var(--ink); outline: none; transition: all 0.2s;
+  }
+  .auth-field input:focus { border-color: var(--warm); box-shadow: 0 0 0 3px rgba(200,169,110,0.15); }
+  .auth-field .input-hint { font-size: 0.72rem; color: #9a8a75; margin-top: 5px; }
+  .auth-submit {
+    width: 100%; padding: 13px; background: var(--deep); color: var(--gold); border: none;
+    border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em; margin-top: 6px;
+  }
+  .auth-submit:hover { background: #3d2510; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(45,27,14,0.25); }
+  .auth-submit:active { transform: translateY(0); }
+  .auth-error {
+    background: var(--red-light); color: var(--accent); border: 1px solid #f0c0c0;
+    border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; font-weight: 500;
+    margin-bottom: 16px; display: none;
+  }
+  .auth-error.show { display: block; }
+  .auth-success {
+    background: var(--green-light); color: var(--green); border: 1px solid #b0d8be;
+    border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; font-weight: 500;
+    margin-bottom: 16px; display: none;
+  }
+  .auth-success.show { display: block; }
+  .auth-user-pill {
+    display: flex; align-items: center; gap: 8px; background: rgba(212,168,67,0.1);
+    border: 1px solid rgba(212,168,67,0.25); border-radius: 20px; padding: 6px 12px;
+    margin-left: auto; cursor: pointer; transition: all 0.2s;
+  }
+  .auth-user-pill:hover { background: rgba(212,168,67,0.2); }
+  .auth-user-pill .pill-avatar { width: 26px; height: 26px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--deep); }
+  .auth-user-pill .pill-name { font-size: 0.78rem; font-weight: 600; color: var(--warm); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .auth-user-pill .pill-logout { font-size: 0.7rem; color: #a89880; }
+  .auth-strength { height: 4px; border-radius: 2px; background: var(--border); margin-top: 6px; overflow: hidden; }
+  .auth-strength-bar { height: 100%; border-radius: 2px; transition: width 0.3s, background 0.3s; width: 0; }
+
+  .pass-cell { font-family: monospace; font-size: 0.85rem; letter-spacing: 0.05em; color: var(--deep); background: rgba(212,168,67,0.08); padding: 3px 8px; border-radius: 5px; display: inline-block; }
+  .admin-badge { display:inline-flex;align-items:center;padding:2px 8px;background:rgba(212,168,67,0.15);color:#b97a20;border-radius:10px;font-size:0.7rem;font-weight:700;margin-left:6px; }
+
   /* MODAL LIBRO */
   .modal-libro-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 300;
@@ -303,6 +399,69 @@
 </head>
 <body>
 
+<!-- ===== AUTH OVERLAY ===== -->
+<div id="auth-overlay">
+  <div class="auth-bg-pattern"></div>
+  <span class="auth-bg-books">📚</span>
+  <span class="auth-bg-books">📖</span>
+  <span class="auth-bg-books">📕</span>
+  <span class="auth-bg-books">📗</span>
+  <div class="auth-container">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">📚</div>
+      <div class="auth-logo-text">
+        <h2>I.E. José Antonio Aguilera</h2>
+        <p>Sistema de Gestión de Biblioteca</p>
+      </div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">🔐 Iniciar Sesión</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">📝 Crear Cuenta</button>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="auth-panel active" id="auth-panel-login">
+      <div class="auth-error" id="login-error"></div>
+      <div class="auth-field">
+        <label>Usuario</label>
+        <input type="text" id="login-user" placeholder="Ingrese su usuario" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="auth-field">
+        <label>Contraseña</label>
+        <input type="password" id="login-pass" placeholder="Ingrese su contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        <div class="input-hint">Cuentas disponibles: <strong>admin</strong> / <strong>biblioteca</strong></div>
+      </div>
+      <button class="auth-submit" onclick="doLogin()">🔓 Entrar al Sistema</button>
+    </div>
+
+    <!-- REGISTER PANEL -->
+    <div class="auth-panel" id="auth-panel-register">
+      <div class="auth-error" id="register-error"></div>
+      <div class="auth-success" id="register-success"></div>
+      <div class="auth-field">
+        <label>Nombre completo</label>
+        <input type="text" id="reg-nombre" placeholder="Ej: María García" autocomplete="name">
+      </div>
+      <div class="auth-field">
+        <label>Nombre de usuario</label>
+        <input type="text" id="reg-user" placeholder="Solo letras, números y guión bajo" autocomplete="username" oninput="checkRegUser(this)">
+        <div class="input-hint">Mínimo 4 caracteres, sin espacios</div>
+      </div>
+      <div class="auth-field">
+        <label>Contraseña</label>
+        <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password" oninput="checkPassStrength(this.value)">
+        <div class="auth-strength"><div class="auth-strength-bar" id="strength-bar"></div></div>
+        <div class="input-hint" id="strength-text"></div>
+      </div>
+      <div class="auth-field">
+        <label>Confirmar contraseña</label>
+        <input type="password" id="reg-pass2" placeholder="Repita la contraseña" autocomplete="new-password">
+      </div>
+      <button class="auth-submit" onclick="doRegister()">✅ Crear Cuenta</button>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="header-inner">
     <div class="logo-icon" style="background:none;padding:0;overflow:hidden"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCACNAHUDASIAAhEBAxEB/8QAHAAAAgIDAQEAAAAAAAAAAAAABgcEBQACCAMB/8QATRAAAQMDAgMDBwgFBwsFAAAAAQIDBAAFEQYhBxIxE0FRCBQiMmFxgRUYVpKhpbHTI1JUkdEWFzQ2QpPBJCUnRGJjZXJ0srMzQ4PS8f/EABsBAAEFAQEAAAAAAAAAAAAAAAYAAQMEBQIH/8QAPBEAAQMCAgYHBQYGAwAAAAAAAQIDEQAEBSEGEjFBYXETIlGBkaHRFFNiksEVFjKTseEHM0JScrIjNGP/2gAMAwEAAhEDEQA/AHL81zgT9Bvvab+dWfNc4E/Qb72m/nU5jsKDOKGu29ERLY+5blzPPpiYoCXOXlKiBnoc9aVKgz5rnAn6Dfe0386s+a5wJ+g33tN/Oqhj+UzDl2Z+4Q9Kvvdg4024kycBBWFnc8u2OTw76tpfHWXFcdD2kChDVuYuCiZu/I6pCQMcnXKxSmlFSPmucCfoN97TfzqxXkucCgDjQv3tN/OqHJ49SYr05L+kglESWzFUoTs5U4hKwccnTChXnZOP8m9KUuFop9cVqMmRJd88GWgUqUNuXcejjNKaUVNV5L3AoAH+Q2PEfK03P/mrceS5wJx/UX72m/nUNnyi3Hb5D7KwFMBUUuOo7bK1LLPagA42GCKL9EcbIGqtK3+/RLSptuzR+1W2XslZ3yn1dunX20qUVE+a5wJ+g33tN/OrPmucCfoN97TfzqppPlIMsLt3NpYqblxUSFLTM2bCsYHqbnetU+Uoy+OzhaQkSJC3UNMN+dY7RanezAzy7b0qeKu/mucCfoN97Tfzqz5rnAn6Dfe0386vV7jW6xqS36dkaXcYuMy3GWW1yhhteSA3kJ3zg7/ZVMPKFW3boc6VpFTTUmEJu03mKGy4hG/odfTFKmirT5rnAn6Dfe0386s+a5wJ+g33tN/OqVo7jZD1Bq+y6eNldiqukZx4OqeB7MpWpKU4xvzBIPxpuDcb0qVJn5rnAn6Dfe0386spzVlKlXxwApIPSkDxi4gcO7mtuDeVXUuWW6hJRFaUSXEpQsjbqMEU6tXR7nK01Pj2WYmHcVskR31JyEL7iRXNU/gLxBnxHrhKutqdu8maqQ8FA8igWkI7lDBPIT8aVPVE1B4OLfNhgXDUCTNQy8tyOyvAAS4QFe8FWe7YUd6A0zpDVugrnqBC7jGtbEDzFJUvJVHjKCgvrnJDYzVW1wL1xHvFrcbuNsTHixktKcSjlWAErBT13yVDr4UdaM4daksvA65aMUuE1cZDbiEPtqJQoLJ3O+xwd6anypeXhfCO56bTcnbvdY7F9n87bgQrmbdjtoTj4jlqnhxOFkOelTcrVUdiNbUSXQAsIea5ShLisHv5+h8atJnk5ask6dasj96guMxn3pDDgBSUqW02kDr0BQf30UPcHtSKjTB8oQUdrptm1+kNi8haFc3X1fRP76VKl2yngtIcYuDtzvrLYaUyWltqAy3Hxze/lSPjRNZr/wAJNI6d1BboMi7uM3lLbUhpDSsgrBxy+3ahC88JX27SuDe9UWhmeXHV9kxuUqLRQgYz+tg1YR+E1zvbTirPqWyvyUuR1ttqOFEoBCuYc23UVzrDcam9ndAkpMcqJLnorhw7w4tfEObe7y9Z4UJtptASUqWjKQkFI3JG1D0vTfCaBLi29m7aodeuqWZjTkdDijGStzmSTjpud/CmXc+EuoJXAeyaBZnxUSo60edu4JTygHPLv44oTb4G8Ro9ztcmNqCAyI7aGH1pR6RbQ8VBI3704FdVDQ9bpHBqLc2rwq56ikS4bKezdcS4VciCoFJ8clf2VeyYnCqPpR1C37w9GZzp0jsyVKWVhQUPi3UOP5O+swq4B26W0NrbU3H9AnOVAkq39lXczgtrNy0T7YHrc4w5qBN0aJKgVJClHkO+R1pCllUHSyeFTPFO3xY8m8tXm2lCGluIVyfo20qKCenQ7++ug9A6stWs9PN3qzrUqMtxTfpJKSFJ6jBpAucCNYt6yuWpIc2Ay9JLhQgkqCEqYSgJG/XmB38MU0uAGir1oPTM2y3iYzKC5q32XGxjZQGxHjtSpjFMwEGsrUkHrWU9NW1ZQTeuJFht8p6IwZM6Sw4W3G2GSUpUNjlWMDehi48QNTT1FNuiR7ayei1/pHPs2HxFSNtOO/y0k9312V08EsZvqCOZz8BJ8qajzzTDfayHW20jvWcUNXfXunLbzIM0y3B0bjpKyfj0pVykypy+0u9znTV/qqWUJ/cnAr0YaZbRhphtoeCEgZ9/jWg1hDys3CB5n6Csp/HLNrJsFZ49Uep8qJblxFv0skWq1Nwmu56SvmUB/wAoyPtobnv3O6km73WXMSrqhB5G/q5r0SlRUAhsr/2RU+JbS6lSnHBnHqDqPfT3Yw3C2+kujPPM57Mh6VQ+1sQujqsQgfCI8zn51Tx4saMf0bLTZ7gnfPvrWTBhvr7R5pHbdywNx8avbbHi9itD7aVOAn0q+x4kRxx4u+ilJHLg9BVa40mtGS624yrVbjcIMxGrnntnlVNu2uSpLyXeurfJBHM1X225ajtYCbbeXuVO/YvgOI+07URW/iVdIuEXmyF5A2LsNYUfqq5aplQQ886mKe0SncE1BwoKKVghST39assJw3EMrdUKgEgZETslJq79s39v/PAWNmY7OxQg+JNNKy6209dCEtXFDLh/9p8FCh7Dnb9xoiQtC09o24FpIzscg0hpMaPJ2kNNrHipO4+NbQXLnbV5tl5mQ1D1WyvtGj8FZxXLmEvIzQQoeFX2cbsnclgoPzDx2+Rp/DcA1lKe2cQtRQyEXO3R7g0kbuR1cqz8CfwFGGlta2jUUlUSE463LSgrUw6gpUkDGevvrPcbW0YcSRzrUbCXk6zKgocD+o2jvFFFZWiVkjIBrKjmuaQDaQLzfVAAK+VpQyOv/qqr3O/UD399R0Lb+XL832iO0TdpJKeYZ3dV3VIxvjoaK8Oj2VvlQhjkfaT/APkawdNySfaa+p5lHAwTmvmakW5EYy0mQtLY71KUAKkvLlNpbrfUMkgnLhWc010iwgb6sGIzkHDo5VlQ/dUaVIHalTaiHD3DvqRIW0Fq7GS24npssGvXT8Zv9LMdRz8h9EeJry5WJMWtm7jF9/yQIyEFUmEpIOW3Kd23M0RIt1uvItWMpPOONR49vuDwU6EBCVjqVVt8n3GMheUB1JG6kHOPhUG/39xt8tpyhI7s4obl8TWrQ7ylC5DvelB2xQoxppj94Qpq1bKDHVgzA2SqaIL/AEcscNtemuXymd/HgKLY8lSGwhkErzjOMY99ez0TtoxfccHbDqcYB9lCtu13Yr4+nzZBgzHNloX0V7u6iWOI5wuU/hPeFLAAo5Kyu3TiLMtKOahGsqQdm4aveJyoTZebcJaCgtO7OBz51XqA6KH7jXzHcMDw2qHfL/YYEsNfKDODt6J5vwr1gTIs9rtYj7bqPFKqPrG/YvWUuNkdYTG8cxWMsJQsomSK9gAdiM46eyrXhsnPE1sk7/J7pJHfhSKqu/rn3VbcNT/pNQP+HO/9yKhxcRbZdo/Wt3Rv/umP7F/6mnCE7dR+6srburKG4FEhE1xTruZKg8SdQvRXnG1i6SDsdh6aqtLNxEeZUhq7MpdbH9pHrVA4iR1K19qEiOFf5yf3z/vDVD5qv9mH1q4tLPEUQ6whUHsBg/Q0J43hjhxJ5xFw2AVEwVpB7waKL1xEmOoLVrjJZQf7StzQpKu9ylLKpM55ee4q5RW/mq/2YfWr6Iy8f0VHxVU1xZ4pcGXW1nhBjwrIVgy3DKrlr8xPrXjFutziuhbE5aN9hz5FMDTXFSVbrWYtxhGZzKxzg8poFMZf7K39avgjrH+qo+tWVfaMv31ubd5lZQYJEEbNmyrlnY3Ni4Hbe7aBH/on1ok1RrlVx9KHG83J/WWFUGrdU6suOL5lHc1O7Hs2VLMRH1q3AdwMRG/rUrPRtyyHRMsqEcCat3+H3uKEXF3eNmMh10wI3ATFVjaVtuBxKlJUDlKgehqxmahu8ttDT8tZSgcowcZFb8jxH9Fb+tWvZOK6xW/rVe+yL2NXolx/ifSs77vhOSbtr8xPrVYrJJKup785qwsV5m2eQH4KyAOrZOUq99b9gsbiK39as5Hv2Vv61JvCr5shSGlgjsSa5To9Bn2tr8xPrRW3xLkBshVtaSs9SFHGaOPJ6v0i+cRn3Xm0o7OCsAD2qTSdKHVDHmrf1qaPkxIUjiFJStsIPmC9gc/2k1JdtYjku4CwkEbQQNvICiPR/DVsXZWbltYCV5JUCfwncCa6ZPLnrisr6kbeFZTQa3piuOuIO2vtQDOAbi93/wC2aHHJMdA9J5Cc7DJom1yw8/re/voZcU38ovAKCSd+c0nNdsOtNhZWsdnJKMA9c4P4mvQbG7UxYW4TBkAHhlXn95hKMSx66bcUUwokRzo3cu1sb9edGH/yD+NR3NRWNs7zmlE9wVmlSiLN5lB5lTXo8yefPpD2VLhRXkpTNRHLoaUFFxKCpLZHTNWVX7sbR4fvWkjQqyBhSleXpTEl6ptEMhL63AVDI50FOQat2HmX2W3WcKQtOQaXXEDVdx1a9BXcmYaPNmeyaEdOOYDoo0X8NEzLnp5tEeK8862SlQSk4Hxp7O9eUpPT5TVDSHRi0s7YuWkkgjb2Vbyd47iSBgDwor0Hoe7au9K3htplGOZa+lDlxhSY8Z9bjDyAkHdaCBTs8maTmNIaUcqG2OvdVLF79y1cU61mYSPM1VwPDGr61Qy/IGuoxsnqooY1/wAPrXoLSLuo9Q3GTJZbUlBbhNgkE+8GqLhrZdMcSYdwd0xPuEaRCA5mprYHNnp3Dxp2eUrbvlHgrqFnly40wl1A78hac/ZmudvIenEayu8FSziTCC+vUpJ/hWYzit25aqe1+sOGXhRT92cM1dXo/M01NHcHmlNre1E+4XEk4ZZIwQO/NA72oOHyLou2r0rLaCHiyp/zk9xxnriulIeCp5sH+yTk9a4+1DBU9qC/pZUVebPOLUMf7zH+NC+LaQYiFJWhwidwyHhRtoXoZgd0HW7lgKAAgnbnxpr8SeG1rsWlU6jtEiQtlfIotrweVKgMbge2o3k2g/zjuAnObc4c+PpIoz4eTxrLgU/AUQuTEYWwoZz6SQSn7CKDfJvSU8S3UkYIt7oPt9JFb6cScvcFWpxUkFOfAkUFHBG8I0nDTaYGq4O8JV9IrpUdKysFZWANlbVLDTDYccvKVttOJ+VpQIU2DkdoqlB5S+h4USwS9W2eO1HdaUhcltI9E8p2UB0//KcWlwouXoJ6/K8r/wAiqB/KUflp0AiA23mLPfDL6seqNuX7TT2DqkFBnLKrmIge1LVGc1yxrHWknWEyDJnRYkIwmezQlhASF9OuB7KtdK8Q71p7Q9z0pAj252HcSoOOLa5lo5uvdQQxbZ63FJbiOuYOPVq1g6a1E+rEa2PIC9lHG3vNGDttZlsNLA1QZAneKhU8VK1lGi/gVpSFqviFboF5ivuQUNrWo8qglwDpue7rXZlstlttkcR7ZDYhsp9VDLaUjH+JpD8A5OspmpLfAkR7Uxb7YwW3loRhxYV03z1610G1y74ScAYGe6hzEnnHHYXl31ypTas2zI7aoOILTL2i7qXGkKHmyyCRuDg0v+ANx8xM5/s1LDaO0CEnBUQOlMLXn9SLt/0rn4Gk15O776dYyoUhfMlxkcvgM5B/wri1zYekf2/qaqXuTlsfiX/qmrq28fIvEx66aIGn3YfnUB8IfcWDkpSTjr7KSXk13X+TXExa3FlJEOSjmB70tqx9tSLxobiJw84jyblabDIdRHddMZ8NFTa21Ap3+Bod05pfVLNzevsmAIiEKW5IU5lGQonIA+JrZdFuxbOaqhBTO3fWrYs9Nctt9qgPOmirihrpMlzF6dIKjsEjARnpVdadRNxtRzrjKYdlImodQptIzkqB3/fvUFMInTLl02BTJDWU7jGKMOFGnUC6W/Ukm529EJtw9ow4OZSgMjpmvLmw88tKZnfyr2q5OHWFutzVSgfhyESYkCQNvZRD5LN8RD1POsC1YbntlaUq/WA/HGKv+EEIW3jpdoA2DMZ9IHh6SKoxplmDxHOqbDf7ciIiWl8R1eiQNuYdffRro1DB8oOfJjOtOolW1b/M2rIJUpP8KJ8MU41ZvMufDHcofvXlek6rW8xZi9tlA6yVz2g9GrI5cvCnMKysFZUw2UNmljppSEKva3FBKRd5JJKsY/Sq76DeOl6hv6bZtseUy+uS+A4hshWAMEZq6uVocvGmdUQWpa2u0ucpQU2fSJS6pXL9mKQqm3OflwlLrZKSlfrAg+2tvRvDW7ohalZpjKKw9NsXdsnFtoT+P+qdhqsvjU5EIqtzwS42d2/1x7Kn2fVz0W3MssafmOrT6/OsJHN3/DNfTgnJJzX3nJOStR7t96LL7AmLtwKKiANw2ftQLh2k1zYtFCUhRO8zP799WfCW43aPxEjzLkWocR9082V5CQcdTXSkebCkOFEWYy+oD1UrBUB41yvgK2OPiKJeGCXv5d2xLU0xytZCiDsoYJ5SPhWZimAo6MupcPVG/Oe+tfBtJnC+GFNDrq3ZbeGdPDiB/Uy6/wDTL/A1zhZpcm13ATrdJLL/ACYJro/iEc6LuxAwnzZe/sxXNKE+gMJOMeFUNF2UPKeQ4JEJ+tbGmdw5b2tu40SCFLz7k1ayNS6if9J24leepxmhG4Spy5ym5ElSkqPNjGKuuUnqDjwxVZc21mUXA0SeXA9HpV7STDbdrDnFMtDWiMhVX+H+L3L+kNsm6e6gMmTAyE1H87mNw12/t/8AJVr51NeCvGp1rdkiMptqbJb/AORWKgrhOlntkhfN4Y61NtKHEA8zahn2UHYBhrzGJMC4RKVp7MhIMTx7a9b03x2zxHR2+Fk7qrbcH9QlRBEkZ7IO6pGJx9e6TljwLppoeTOFDiM4FOOLPmDm7isn1kUtsEnfFMvybfR4juH/AIe5/wByKOdIbVhmwUW0gGU7OYrxLQ6+uH8VSHVkjVXtPwKrpcVlaJJI6n4CsoBJjKvRaEjoCIJUl9i8XSOJDy33ENugJ51kknp7ao5vBTS82SuTKl3Nbyx6Sg8kZPj6tM6srpuWjKCRyJqd19bwh2FcwD+opV/zFaP/AGi6f34/+tU+r+FmgdL2R673Fy9KjtFIV2TqSfSUEju8TTsqHdIMK5x1w7jEYlx1YKmnkBaTg+Bqb2l/3ivE+tVuiZ92n5U+lc1xIvB2WZKGJOoS5GiKluIJTnkTnOPbsait3LhBbJLMpLuqmH2yVtnlQFJUNj+NdHRNJ6XiqWY2nrUyXEFtRREQMp/VO24rwlaO0nIdMmTpq0PvLyVLchoJJPU7imU+8oQpZI5n1rpKG0KCkoSCPhT6UorpqjQT2n47028apMK5pWhABRnlCyg5+INVUaxcK32X3WJWoFNx2HHnCVJBCUAE/iKe7mkdLmK1FOn7Wphons2zFQUoycnAxgZJNataU0vGCkM6dtSAtPZr5YiAFJPUdOlRtFTMlskT2EipnnS+kJdAUB2pB+lIez2bhZdrNMukZ7UQYhoC1hSkBRHMlOw96hVe4eDoktxi/qNTzqw2AOTGc4/GuiGdI6Wix3I0fTlpaYeRyOtIiICVgEEAjG4yAfhXgrQ2jXCFOaVsyiBnJht93Tuqb2p/3ivmPrVfoWZno0/Kn0pcaT4W6B1PZWbrapV3LC1lI53EggjxGKtzwJ0oesy5/wB8P4UybTboFsiIi22GxDjpOUtMthCAT4AVOpe1P+8V4n1pdCz7tPyp9KVI4E6TH+t3L+9H8KvNE8MLFpK9LutsflqfWyWj2qwoYJB8PZR1WVwt51wQtRI4k122lDZlCEg8EgHyFaFCu5QHwrK3rK4mnBiv/9k=" alt="Logo I.E. José Antonio Aguilera" style="width:44px;height:44px;object-fit:contain;border-radius:8px;display:block"></div>
@@ -315,7 +474,13 @@
       <button onclick="showView('catalogo', this)">📖 Catálogo</button>
       <button onclick="showView('prestamos', this)">🔖 Préstamos</button>
       <button onclick="showView('leyenda', this)">📋 Leyenda</button>
+      <button id="nav-admin-btn" onclick="showView('admin', this)" style="display:none;color:#e8a020">🛡️ Admin</button>
     </nav>
+    <div class="auth-user-pill" onclick="doLogout()" title="Cerrar sesión">
+      <div class="pill-avatar" id="pill-avatar">?</div>
+      <span class="pill-name" id="pill-name">Usuario</span>
+      <span class="pill-logout">✕ Salir</span>
+    </div>
   </div>
 </header>
 
@@ -521,6 +686,78 @@
   </div>
 </div>
 
+<!-- ===== ADMIN ===== -->
+<div id="view-admin" class="view">
+  <h2 class="section-title">🛡️ Panel de Administrador</h2>
+  <p class="section-sub">Gestión de usuarios y contraseñas del sistema · Los usuarios marcados <span style="background:#e8f4ed;color:#2d5a3d;padding:1px 7px;border-radius:8px;font-size:0.8rem;font-weight:700">Fijo</span> están siempre disponibles para todos los visitantes de la página</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+
+    <!-- TABLA DE USUARIOS -->
+    <div class="chart-card" style="grid-column:1/-1">
+      <h3 style="display:flex;align-items:center;justify-content:space-between">
+        👥 Usuarios Registrados
+        <button class="btn-nuevo-libro" onclick="renderAdminUsers()" style="font-size:0.78rem;padding:7px 14px">🔄 Actualizar</button>
+      </h3>
+      <div style="overflow-x:auto;margin-top:4px">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+          <thead>
+            <tr>
+              <th style="background:var(--deep);color:var(--warm);padding:10px 14px;text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:.07em">#</th>
+              <th style="background:var(--deep);color:var(--warm);padding:10px 14px;text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:.07em">Nombre Completo</th>
+              <th style="background:var(--deep);color:var(--warm);padding:10px 14px;text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:.07em">Usuario</th>
+              <th style="background:var(--deep);color:var(--warm);padding:10px 14px;text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:.07em">Contraseña</th>
+              <th style="background:var(--deep);color:var(--warm);padding:10px 14px;text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:.07em">Fecha Registro</th>
+              <th style="background:var(--deep);color:var(--warm);padding:10px 14px;text-align:center;font-size:0.72rem;text-transform:uppercase;letter-spacing:.07em">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="admin-users-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CREAR USUARIO DESDE ADMIN -->
+    <div class="form-card" style="position:static">
+      <h3>➕ Crear Nuevo Usuario</h3>
+      <div class="auth-error" id="admin-create-error" style="margin-bottom:12px"></div>
+      <div class="auth-success" id="admin-create-ok" style="margin-bottom:12px"></div>
+      <div class="form-group">
+        <label>Nombre Completo</label>
+        <input type="text" id="adm-nombre" placeholder="Nombre del bibliotecario">
+      </div>
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" id="adm-user" placeholder="Ej: biblio2025" oninput="this.value=this.value.replace(/[^a-zA-Z0-9_]/g,'')">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="text" id="adm-pass" placeholder="Ingrese contraseña">
+        <div class="hint">Se guardará tal como la escribe</div>
+      </div>
+      <button class="btn-primary" onclick="adminCreateUser()">✅ Crear Usuario</button>
+    </div>
+
+    <!-- CAMBIAR CONTRASEÑA -->
+    <div class="form-card" style="position:static">
+      <h3>🔑 Cambiar Contraseña</h3>
+      <div class="auth-error" id="admin-pass-error" style="margin-bottom:12px"></div>
+      <div class="auth-success" id="admin-pass-ok" style="margin-bottom:12px"></div>
+      <div class="form-group">
+        <label>Seleccionar Usuario</label>
+        <select id="adm-change-user">
+          <option value="">-- Seleccione usuario --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nueva Contraseña</label>
+        <input type="text" id="adm-new-pass" placeholder="Nueva contraseña">
+      </div>
+      <button class="btn-primary" onclick="adminChangePass()">🔄 Cambiar Contraseña</button>
+    </div>
+
+  </div>
+</div>
+
 </main>
 
 
@@ -654,6 +891,7 @@ function showView(id, btn) {
   btn.classList.add('active');
   if (id === 'catalogo') renderTable();
   if (id === 'prestamos') { setTodayDates(); renderPrestamos(); }
+  if (id === 'admin') renderAdminUsers();
 }
 
 // =================== DASHBOARD ===================
@@ -1039,6 +1277,237 @@ function guardarLibro() {
 document.getElementById('modal-libro').addEventListener('click', function(e) {
   if (e.target === this) cerrarModalLibro();
 });
+
+// =================== AUTHENTICATION ===================
+// USUARIOS FIJOS EN EL CÓDIGO — siempre disponibles para todos
+// El admin puede agregar usuarios extras que se guardan en localStorage del navegador local
+const AUTH_KEY = 'biblioteca_users_v2';
+const SESSION_KEY = 'biblioteca_session';
+
+// Usuarios base codificados directamente (siempre visibles, no dependen de localStorage)
+const BASE_USERS = [
+  { username: 'admin',       password: 'biblioteca2025', nombre: 'Administrador',    createdAt: '2025-01-01', base: true },
+  { username: 'biblioteca',  password: 'colegio2025',    nombre: 'Bibliotecaria',    createdAt: '2025-01-01', base: true },
+];
+
+function getExtraUsers() {
+  try { const d = localStorage.getItem(AUTH_KEY); return d ? JSON.parse(d) : []; }
+  catch(e) { return []; }
+}
+function saveExtraUsers(extras) {
+  try { localStorage.setItem(AUTH_KEY, JSON.stringify(extras)); } catch(e) {}
+}
+function getUsers() {
+  const extras = getExtraUsers();
+  // Merge: base users + extras, extras can override base passwords
+  const map = {};
+  BASE_USERS.forEach(u => map[u.username.toLowerCase()] = {...u});
+  extras.forEach(u => map[u.username.toLowerCase()] = u);
+  return Object.values(map);
+}
+function saveUsers(users) {
+  // Only save non-base users or base users with modified passwords to localStorage
+  const extras = users.filter(u => {
+    const base = BASE_USERS.find(b => b.username.toLowerCase() === u.username.toLowerCase());
+    return !base || base.password !== u.password || base.nombre !== u.nombre;
+  });
+  saveExtraUsers(extras);
+}
+function getSession() {
+  try { const d = sessionStorage.getItem(SESSION_KEY); return d ? JSON.parse(d) : null; }
+  catch(e) { return null; }
+}
+function saveSession(data) {
+  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(data)); } catch(e) {}
+}
+function clearSession() {
+  try { sessionStorage.removeItem(SESSION_KEY); } catch(e) {}
+}
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('auth-panel-' + tab).classList.add('active');
+  document.querySelectorAll('.auth-tab')[tab === 'login' ? 0 : 1].classList.add('active');
+  document.getElementById('login-error') && (document.getElementById('login-error').className = 'auth-error');
+  document.getElementById('register-error') && (document.getElementById('register-error').className = 'auth-error');
+  document.getElementById('register-success') && (document.getElementById('register-success').className = 'auth-success');
+}
+
+function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  if (!user || !pass) { errEl.textContent = '⚠️ Complete usuario y contraseña'; errEl.className = 'auth-error show'; return; }
+  const users = getUsers();
+  const found = users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass);
+  if (!found) { errEl.textContent = '❌ Usuario o contraseña incorrectos'; errEl.className = 'auth-error show'; return; }
+  errEl.className = 'auth-error';
+  saveSession({ username: found.username, nombre: found.nombre, loginAt: new Date().toISOString() });
+  showApp(found);
+}
+
+function doRegister() {
+  const nombre = document.getElementById('reg-nombre').value.trim();
+  const user = document.getElementById('reg-user').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  const errEl = document.getElementById('register-error');
+  const okEl = document.getElementById('register-success');
+  errEl.className = 'auth-error'; okEl.className = 'auth-success';
+  if (!nombre) { errEl.textContent = '⚠️ Ingrese su nombre completo'; errEl.className = 'auth-error show'; return; }
+  if (!user || user.length < 4) { errEl.textContent = '⚠️ El usuario debe tener al menos 4 caracteres'; errEl.className = 'auth-error show'; return; }
+  if (!/^[a-zA-Z0-9_]+$/.test(user)) { errEl.textContent = '⚠️ Solo letras, números y guión bajo (_)'; errEl.className = 'auth-error show'; return; }
+  if (!pass || pass.length < 6) { errEl.textContent = '⚠️ La contraseña debe tener al menos 6 caracteres'; errEl.className = 'auth-error show'; return; }
+  if (pass !== pass2) { errEl.textContent = '⚠️ Las contraseñas no coinciden'; errEl.className = 'auth-error show'; return; }
+  const users = getUsers();
+  if (users.find(u => u.username.toLowerCase() === user.toLowerCase())) { errEl.textContent = '⚠️ Ese nombre de usuario ya existe'; errEl.className = 'auth-error show'; return; }
+  users.push({ username: user, password: pass, nombre, createdAt: new Date().toISOString() });
+  saveUsers(users);
+  document.getElementById('reg-nombre').value = '';
+  document.getElementById('reg-user').value = '';
+  document.getElementById('reg-pass').value = '';
+  document.getElementById('reg-pass2').value = '';
+  document.getElementById('strength-bar').style.width = '0';
+  okEl.textContent = '✅ Cuenta creada correctamente. Ahora puede iniciar sesión.';
+  okEl.className = 'auth-success show';
+  setTimeout(() => switchAuthTab('login'), 2000);
+}
+
+function doLogout() {
+  if (!confirm('¿Cerrar sesión?')) return;
+  clearSession();
+  location.reload();
+}
+
+function adminCreateUser() {
+  const nombre = document.getElementById('adm-nombre').value.trim();
+  const user = document.getElementById('adm-user').value.trim();
+  const pass = document.getElementById('adm-pass').value.trim();
+  const errEl = document.getElementById('admin-create-error');
+  const okEl = document.getElementById('admin-create-ok');
+  errEl.className = 'auth-error'; okEl.className = 'auth-success';
+  if (!nombre) { errEl.textContent = '⚠️ Ingrese el nombre completo'; errEl.className = 'auth-error show'; return; }
+  if (!user || user.length < 4) { errEl.textContent = '⚠️ Usuario mínimo 4 caracteres'; errEl.className = 'auth-error show'; return; }
+  if (!pass || pass.length < 4) { errEl.textContent = '⚠️ Contraseña mínimo 4 caracteres'; errEl.className = 'auth-error show'; return; }
+  const users = getUsers();
+  if (users.find(u => u.username.toLowerCase() === user.toLowerCase())) { errEl.textContent = '⚠️ Ese usuario ya existe'; errEl.className = 'auth-error show'; return; }
+  users.push({ username: user, password: pass, nombre, createdAt: new Date().toISOString() });
+  saveUsers(users);
+  document.getElementById('adm-nombre').value = '';
+  document.getElementById('adm-user').value = '';
+  document.getElementById('adm-pass').value = '';
+  okEl.textContent = '✅ Usuario "' + user + '" creado correctamente';
+  okEl.className = 'auth-success show';
+  renderAdminUsers();
+}
+
+function adminChangePass() {
+  const user = document.getElementById('adm-change-user').value;
+  const newPass = document.getElementById('adm-new-pass').value.trim();
+  const errEl = document.getElementById('admin-pass-error');
+  const okEl = document.getElementById('admin-pass-ok');
+  errEl.className = 'auth-error'; okEl.className = 'auth-success';
+  if (!user) { errEl.textContent = '⚠️ Seleccione un usuario'; errEl.className = 'auth-error show'; return; }
+  if (!newPass || newPass.length < 4) { errEl.textContent = '⚠️ Contraseña mínimo 4 caracteres'; errEl.className = 'auth-error show'; return; }
+  const users = getUsers();
+  const idx = users.findIndex(u => u.username === user);
+  if (idx < 0) { errEl.textContent = '⚠️ Usuario no encontrado'; errEl.className = 'auth-error show'; return; }
+  users[idx].password = newPass;
+  saveUsers(users);
+  document.getElementById('adm-new-pass').value = '';
+  okEl.textContent = '✅ Contraseña de "' + user + '" actualizada';
+  okEl.className = 'auth-success show';
+  renderAdminUsers();
+}
+
+function adminDeleteUser(username) {
+  if (username === 'admin') { showToast('⚠️ No puede eliminar al administrador', true); return; }
+  const session = getSession();
+  if (session && session.username === username) { showToast('⚠️ No puede eliminar su propia sesión activa', true); return; }
+  if (!confirm('¿Eliminar al usuario "' + username + '"? Esta acción no se puede deshacer.')) return;
+  let users = getUsers();
+  users = users.filter(u => u.username !== username);
+  saveUsers(users);
+  renderAdminUsers();
+  showToast('🗑️ Usuario "' + username + '" eliminado');
+}
+
+function renderAdminUsers() {
+  const users = getUsers();
+  const session = getSession();
+  const tbody = document.getElementById('admin-users-body');
+  if (!tbody) return;
+  tbody.innerHTML = users.map((u, i) => {
+    const isMe = session && session.username === u.username;
+    const isAdmin = u.username === 'admin';
+    const isBase = BASE_USERS.find(b => b.username.toLowerCase() === u.username.toLowerCase());
+    const fecha = u.createdAt ? new Date(u.createdAt).toLocaleDateString('es-CO') : '—';
+    return `<tr style="border-bottom:1px solid #ede6d8;${isMe?'background:#faf5ed':''}">
+      <td style="padding:10px 14px;color:#8a7a65;font-size:0.78rem;font-weight:600">${i+1}</td>
+      <td style="padding:10px 14px;font-weight:500">${u.nombre || '—'}${isMe?'<span class="admin-badge">Yo</span>':''}${isAdmin?'<span class="admin-badge" style="background:rgba(45,27,14,0.12);color:var(--deep)">Admin</span>':''}${isBase?'<span class="admin-badge" style="background:#e8f4ed;color:#2d5a3d">Fijo</span>':''}</td>
+      <td style="padding:10px 14px;font-family:monospace;color:var(--deep);font-weight:700">${u.username}</td>
+      <td style="padding:10px 14px"><span class="pass-cell">🔑 ${u.password}</span></td>
+      <td style="padding:10px 14px;font-size:0.78rem;color:#7a6a55">${fecha}</td>
+      <td style="padding:10px 14px;text-align:center">${!isAdmin ? '<button class="btn-danger" onclick="adminDeleteUser(\''+u.username+'\')" title="Eliminar usuario">🗑️</button>' : '<span style="font-size:0.72rem;color:#9a8a75">Protegido</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  // Populate change-pass select
+  const sel = document.getElementById('adm-change-user');
+  if (sel) {
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">-- Seleccione usuario --</option>' +
+      users.map(u => `<option value="${u.username}" ${u.username===cur?'selected':''}>${u.nombre ? u.nombre + ' (' + u.username + ')' : u.username}</option>`).join('');
+  }
+}
+
+function checkPassStrength(val) {
+  const bar = document.getElementById('strength-bar');
+  const txt = document.getElementById('strength-text');
+  if (!val) { bar.style.width = '0'; txt.textContent = ''; return; }
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^a-zA-Z0-9]/.test(val)) score++;
+  const colors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#27ae60'];
+  const labels = ['Muy débil','Débil','Regular','Fuerte','Muy fuerte'];
+  const w = ['20%','40%','60%','80%','100%'];
+  bar.style.width = w[score-1] || '0';
+  bar.style.background = colors[score-1] || '#ddd';
+  txt.textContent = labels[score-1] || '';
+}
+
+function checkRegUser(input) {
+  input.value = input.value.replace(/[^a-zA-Z0-9_]/g, '');
+}
+
+function showApp(user) {
+  const overlay = document.getElementById('auth-overlay');
+  overlay.classList.add('hidden');
+  setTimeout(() => overlay.style.display = 'none', 400);
+  const initials = user.nombre ? user.nombre.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) : user.username[0].toUpperCase();
+  document.getElementById('pill-avatar').textContent = initials;
+  document.getElementById('pill-name').textContent = user.nombre || user.username;
+  // Show admin button only for admin
+  if (user.username === 'admin') {
+    const adminBtn = document.getElementById('nav-admin-btn');
+    if (adminBtn) adminBtn.style.display = '';
+  }
+}
+
+// Check session on load
+(function initAuth() {
+  const session = getSession();
+  if (session) {
+    const users = getUsers();
+    const user = users.find(u => u.username === session.username);
+    if (user) { showApp(user); return; }
+  }
+  // Show overlay — app content is hidden until login
+})();
 
 // =================== INIT ===================
 renderDashboard();
