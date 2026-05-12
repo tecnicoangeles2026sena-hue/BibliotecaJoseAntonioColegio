@@ -429,7 +429,7 @@
       <div class="auth-field">
         <label>Contraseña</label>
         <input type="password" id="login-pass" placeholder="Ingrese su contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-        <div class="input-hint">Contraseña predeterminada: <strong>biblioteca2025</strong></div>
+        <div class="input-hint">Cuentas disponibles: <strong>admin</strong> / <strong>biblioteca</strong></div>
       </div>
       <button class="auth-submit" onclick="doLogin()">🔓 Entrar al Sistema</button>
     </div>
@@ -689,7 +689,7 @@
 <!-- ===== ADMIN ===== -->
 <div id="view-admin" class="view">
   <h2 class="section-title">🛡️ Panel de Administrador</h2>
-  <p class="section-sub">Gestión de usuarios y contraseñas del sistema</p>
+  <p class="section-sub">Gestión de usuarios y contraseñas del sistema · Los usuarios marcados <span style="background:#e8f4ed;color:#2d5a3d;padding:1px 7px;border-radius:8px;font-size:0.8rem;font-weight:700">Fijo</span> están siempre disponibles para todos los visitantes de la página</p>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
 
@@ -1279,16 +1279,39 @@ document.getElementById('modal-libro').addEventListener('click', function(e) {
 });
 
 // =================== AUTHENTICATION ===================
-const AUTH_KEY = 'biblioteca_users';
+// USUARIOS FIJOS EN EL CÓDIGO — siempre disponibles para todos
+// El admin puede agregar usuarios extras que se guardan en localStorage del navegador local
+const AUTH_KEY = 'biblioteca_users_v2';
 const SESSION_KEY = 'biblioteca_session';
-const DEFAULT_ADMIN = { username: 'admin', password: 'biblioteca2025', nombre: 'Administrador', createdAt: '2025-01-01' };
 
+// Usuarios base codificados directamente (siempre visibles, no dependen de localStorage)
+const BASE_USERS = [
+  { username: 'admin',       password: 'biblioteca2025', nombre: 'Administrador',    createdAt: '2025-01-01', base: true },
+  { username: 'biblioteca',  password: 'colegio2025',    nombre: 'Bibliotecaria',    createdAt: '2025-01-01', base: true },
+];
+
+function getExtraUsers() {
+  try { const d = localStorage.getItem(AUTH_KEY); return d ? JSON.parse(d) : []; }
+  catch(e) { return []; }
+}
+function saveExtraUsers(extras) {
+  try { localStorage.setItem(AUTH_KEY, JSON.stringify(extras)); } catch(e) {}
+}
 function getUsers() {
-  try { const d = localStorage.getItem(AUTH_KEY); return d ? JSON.parse(d) : [DEFAULT_ADMIN]; }
-  catch(e) { return [DEFAULT_ADMIN]; }
+  const extras = getExtraUsers();
+  // Merge: base users + extras, extras can override base passwords
+  const map = {};
+  BASE_USERS.forEach(u => map[u.username.toLowerCase()] = {...u});
+  extras.forEach(u => map[u.username.toLowerCase()] = u);
+  return Object.values(map);
 }
 function saveUsers(users) {
-  try { localStorage.setItem(AUTH_KEY, JSON.stringify(users)); } catch(e) {}
+  // Only save non-base users or base users with modified passwords to localStorage
+  const extras = users.filter(u => {
+    const base = BASE_USERS.find(b => b.username.toLowerCase() === u.username.toLowerCase());
+    return !base || base.password !== u.password || base.nombre !== u.nombre;
+  });
+  saveExtraUsers(extras);
 }
 function getSession() {
   try { const d = sessionStorage.getItem(SESSION_KEY); return d ? JSON.parse(d) : null; }
@@ -1418,14 +1441,15 @@ function renderAdminUsers() {
   tbody.innerHTML = users.map((u, i) => {
     const isMe = session && session.username === u.username;
     const isAdmin = u.username === 'admin';
+    const isBase = BASE_USERS.find(b => b.username.toLowerCase() === u.username.toLowerCase());
     const fecha = u.createdAt ? new Date(u.createdAt).toLocaleDateString('es-CO') : '—';
     return `<tr style="border-bottom:1px solid #ede6d8;${isMe?'background:#faf5ed':''}">
       <td style="padding:10px 14px;color:#8a7a65;font-size:0.78rem;font-weight:600">${i+1}</td>
-      <td style="padding:10px 14px;font-weight:500">${u.nombre || '—'}${isMe?'<span class="admin-badge">Yo</span>':''}${isAdmin?'<span class="admin-badge" style="background:rgba(45,27,14,0.12);color:var(--deep)">Admin</span>':''}</td>
+      <td style="padding:10px 14px;font-weight:500">${u.nombre || '—'}${isMe?'<span class="admin-badge">Yo</span>':''}${isAdmin?'<span class="admin-badge" style="background:rgba(45,27,14,0.12);color:var(--deep)">Admin</span>':''}${isBase?'<span class="admin-badge" style="background:#e8f4ed;color:#2d5a3d">Fijo</span>':''}</td>
       <td style="padding:10px 14px;font-family:monospace;color:var(--deep);font-weight:700">${u.username}</td>
       <td style="padding:10px 14px"><span class="pass-cell">🔑 ${u.password}</span></td>
       <td style="padding:10px 14px;font-size:0.78rem;color:#7a6a55">${fecha}</td>
-      <td style="padding:10px 14px;text-align:center">${!isAdmin ? '<button class="btn-danger" onclick="adminDeleteUser(\''+u.username+'\')" title="Eliminar usuario">🗑️ Eliminar</button>' : '<span style="font-size:0.72rem;color:#9a8a75">Protegido</span>'}</td>
+      <td style="padding:10px 14px;text-align:center">${!isAdmin ? '<button class="btn-danger" onclick="adminDeleteUser(\''+u.username+'\')" title="Eliminar usuario">🗑️</button>' : '<span style="font-size:0.72rem;color:#9a8a75">Protegido</span>'}</td>
     </tr>`;
   }).join('');
 
